@@ -30,4 +30,4 @@ override.tf.json
 # example: *tfplan*
 
 # Terragrunt files
-.terragrunt-cache
+**/.terragrunt-cache/*
