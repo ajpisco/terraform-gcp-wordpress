@@ -22,3 +22,5 @@ There are 2 folders in this repo:
   set TF_VAR_env=dev
   ```
 - `terragrunt`: This one as the config files inside this folder and one folder for each environment (dev, qa and prd) in which we have a `terragrunt.hcl` file with the inputs for that specific environment 
+
+Important - For this PoC we didn't use a Vault where we could extract sensitive data, so there are 2 variables that should be used as environment variables: TF_VAR_user_name and TF_VAR_user_password (both regarding DB details)
