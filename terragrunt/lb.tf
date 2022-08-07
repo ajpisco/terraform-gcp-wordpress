@@ -3,7 +3,7 @@ module "lb-http" {
   source  = "GoogleCloudPlatform/lb-http/google"
   version = "6.3.0"
   
-  name    = var.load_balancer_name
+  name    = join("-",[var.load_balancer_name,var.env])
   project = var.project_id
   target_tags = [var.https_tag, var.http_tag]
   firewall_networks = [module.wordpress-vpc.network_name]

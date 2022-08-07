@@ -84,3 +84,33 @@ variable "product_name" {
   type = string
   default = "wordpress"
 }
+
+variable "public_address" {
+  type = string
+  default = "wordpress-public-address"
+}
+
+variable "db_name" {
+  type = string
+  default = "wordpress-db"
+}
+
+variable "user_name" {
+  type = string
+  sensitive   = true
+}
+
+variable "user_password" {
+  type = string
+  sensitive   = true
+}
+
+variable "db_tier" {
+  type = string
+  default = "db-n1-standard-1"
+}
+
+variable "database_version" {
+  type = string
+  default = "MYSQL_5_7"
+}

@@ -3,7 +3,7 @@ module "wordpress-vpc" {
     version = "5.2.0"
 
     project_id   = var.project_id
-    network_name = var.network_name
+    network_name = join("-",[var.network_name,var.env])
     shared_vpc_host = false
 }
 
@@ -144,7 +144,7 @@ module "wordpress_public_address" {
   project_id	= var.project_id
   region = var.region
   address_type = "EXTERNAL"
-  names = ["wordpress-public-address"]
+  names = [var.public_address]
 }
 
 # Module cloud-nat has a bug while creating Router

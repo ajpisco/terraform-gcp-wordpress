@@ -2,5 +2,5 @@ terraform {
     source = "../"
 }
 inputs = {
-  env           = "dev"
+  env           = "qa"
 }
