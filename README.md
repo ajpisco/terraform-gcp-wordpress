@@ -15,6 +15,7 @@ This script will create the following resources:
 - `HTTP Load Balancer`: To load workload into the MIG
 - `Instance template`: To set the base instance image to run
 - `Managed Instance Group`: Scale the instances
+- `SQL`: Mysql database
 
 There are 2 folders in this repo: 
 - `terraform`: This one uses environment variables that will set some resources name in deploy time. Example on setting env var: 

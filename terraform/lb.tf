@@ -2,12 +2,12 @@
 module "lb-http" {
   source  = "GoogleCloudPlatform/lb-http/google"
   version = "6.3.0"
-  
-  name    = join("-",[var.load_balancer_name,var.env])
-  project = var.project_id
-  target_tags = [var.https_tag, var.http_tag]
+
+  name              = join("-", [var.load_balancer_name, var.env])
+  project           = var.project_id[var.env]
+  target_tags       = [var.https_tag, var.http_tag]
   firewall_networks = [module.wordpress-vpc.network_name]
-  address = module.wordpress_public_address.addresses[0]
+  address           = module.wordpress_public_address.addresses[0]
 
   backends = {
     default = {

@@ -9,7 +9,7 @@ module "wordpress_sa" {
   source  = "terraform-google-modules/iam/google//modules/service_accounts_iam"
   version = "7.4.1"
 
- service_accounts = [google_service_account.wordpress_sa.email]
- mode             = "additive"
+  service_accounts = [google_service_account.wordpress_sa.email]
+  mode             = "additive"
 
 }

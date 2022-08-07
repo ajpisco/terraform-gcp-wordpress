@@ -3,4 +3,5 @@ terraform {
 }
 inputs = {
   env           = "dev"
+  project_id = "ajpisco"
 }
