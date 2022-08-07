@@ -15,12 +15,42 @@ This script will create the following resources:
 - `HTTP Load Balancer`: To load workload into the MIG
 - `Instance template`: To set the base instance image to run
 - `Managed Instance Group`: Scale the instances
+- `SQL`: Mysql database
 
 There are 2 folders in this repo: 
-- `terraform`: This one uses environment variables that will set some resources name in deploy time. Example on setting env var: 
-  ```bash 
-  set TF_VAR_env=dev
-  ```
-- `terragrunt`: This one as the config files inside this folder and one folder for each environment (dev, qa and prd) in which we have a `terragrunt.hcl` file with the inputs for that specific environment 
+- `terraform`: This one uses environment variables or the terraform.tfvars in deploy time. Example on setting env var: 
+```bash 
+env = "<environment-name>"
+project_id = "<project-id>"
+```
+- `terragrunt`: uses the following structure:
+```
+📦terragrunt
+ ┣ 📂modules
+ ┃ ┣ 📂compute
+ ┃ ┣ 📂iam
+ ┃ ┣ 📂lb
+ ┃ ┣ 📂network
+ ┃ ┗ 📂sql
+ ┣ 📂project_alpha
+ ┃ ┣ 📂australia-southeast1
+ ┃ ┃ ┣ 📂dev
+ ┃ ┃ ┃ ┣ 📂compute-service
+ ┃ ┃ ┃ ┃ ┗ 📜terragrunt.hcl
+ ┃ ┃ ┃ ┣ 📂iam-service
+ ┃ ┃ ┃ ┃ ┗ 📜terragrunt.hcl
+ ┃ ┃ ┃ ┣ 📂lb-service
+ ┃ ┃ ┃ ┃ ┗ 📜terragrunt.hcl
+ ┃ ┃ ┃ ┣ 📂network-service
+ ┃ ┃ ┃ ┃ ┗ 📜terragrunt.hcl
+ ┃ ┃ ┃ ┗ 📜env.hcl
+ ┃ ┃ ┗ 📜region.hcl
+ ┃ ┗ 📜project.hcl
+ ┣ 📂project_beta
+ ┗ 📜terragrunt.hcl
+  ``` 
 
-Important - For this PoC we didn't use a Vault where we could extract sensitive data, so there are 2 variables that should be used as environment variables: TF_VAR_user_name and TF_VAR_user_password (both regarding DB details)
+
+
+
+Note: To avoid having Terragrunt throwing a "Filename too long" set environment variable TERRAGRUNT_DOWNLOAD to a different path: Example TERRAGRUNT_DOWNLOAD==C:\.terragrunt-cache
