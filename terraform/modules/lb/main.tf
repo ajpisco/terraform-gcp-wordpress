@@ -1,66 +1,99 @@
-# LB uses a different module since the other one doesn't support it
-module "lb-http" {
-  source  = "GoogleCloudPlatform/lb-http/google"
-  version = "6.3.0"
-
-  name              = var.load_balancer_name
-  project           = var.project_id
-  target_tags       = [var.https_tag, var.http_tag]
-  firewall_networks = [var.network_name]
-  address           = var.public_address
-
-  backends = {
-    default = {
-      description                     = null
-      protocol                        = "HTTP"
-      port                            = 80
-      port_name                       = "http"
-      timeout_sec                     = 10
-      connection_draining_timeout_sec = null
-      enable_cdn                      = false
-      security_policy                 = null
-      session_affinity                = null
-      affinity_cookie_ttl_sec         = null
-      custom_request_headers          = null
-      custom_response_headers         = null
-
-      health_check = {
-        check_interval_sec  = null
-        timeout_sec         = null
-        healthy_threshold   = null
-        unhealthy_threshold = null
-        request_path        = "/"
-        port                = 80
-        host                = null
-        logging             = null
-      }
-
-      log_config = {
-        enable      = true
-        sample_rate = 1.0
-      }
-
-      groups = [
-        {
-          group                        = var.instance_group
-          balancing_mode               = null
-          capacity_scaler              = null
-          description                  = null
-          max_connections              = null
-          max_connections_per_instance = null
-          max_connections_per_endpoint = null
-          max_rate                     = null
-          max_rate_per_instance        = null
-          max_rate_per_endpoint        = null
-          max_utilization              = null
-        }
-      ]
-
-      iap_config = {
-        enable               = false
-        oauth2_client_id     = ""
-        oauth2_client_secret = ""
-      }
-    }
-  }
+locals {
+  target_http_proxy_name = join("-", [var.load_balancer_name, "http-proxy"])
+  url_map_name = join("-", [var.load_balancer_name, "url-map"])
+  health_check_name = join("-", [var.load_balancer_name, "hc-default"])
+  backend_service_name = join("-", [var.load_balancer_name, "backend-default"])
+  firewall_name = join("-", [var.load_balancer_name, "fw"])
 }
+
+  resource "google_compute_health_check" "default" {
+      check_interval_sec  = 5
+      healthy_threshold   = 2
+      name                = local.health_check_name
+      timeout_sec         = 5
+      unhealthy_threshold = 2
+
+      tcp_health_check {
+          port         = 80
+          proxy_header = "NONE"
+        }
+
+      log_config {
+          enable = false
+        }
+    }
+    
+    resource "google_compute_backend_service" "default" {
+      health_checks                   = [
+          google_compute_health_check.default.self_link,
+        ]
+      load_balancing_scheme           = "EXTERNAL"
+      name                            = local.backend_service_name
+      port_name                       = "http"
+      protocol                        = "HTTP"
+      session_affinity                = "NONE"
+      timeout_sec                     = 10
+
+      backend {
+          group                        = var.instance_group
+        }
+
+      log_config {
+          enable      = true
+          sample_rate = 1
+        }
+        depends_on = [
+          google_compute_health_check.default
+        ]
+    }
+
+  resource "google_compute_firewall" "default-hc" {
+      direction               = "INGRESS"
+      disabled                = false
+      name                    = local.firewall_name
+      network                 = var.network_name
+      priority                = 1000
+      source_ranges           = [
+          "130.211.0.0/22",
+          "35.191.0.0/16",
+        ]
+      target_tags             = [
+          var.http_tag,
+          var.https_tag,
+        ]
+
+      allow {
+          ports    = [
+              "80",
+            ]
+          protocol = "tcp"
+        }
+    }
+
+  resource "google_compute_global_forwarding_rule" "http" {
+      ip_protocol           = "TCP"
+      load_balancing_scheme = "EXTERNAL"
+      name                  = var.load_balancer_name
+      port_range            = "80"
+      ip_address = var.public_address
+      target                = google_compute_target_http_proxy.default.self_link
+      depends_on = [
+        google_compute_target_http_proxy.default
+      ]
+    }
+
+  resource "google_compute_url_map" "default" {
+      default_service    = google_compute_backend_service.default.self_link
+      name               = local.url_map_name
+      depends_on = [
+        google_compute_backend_service.default
+      ]
+    }
+
+  resource "google_compute_target_http_proxy" "default" {
+      name               = local.target_http_proxy_name
+      url_map            = google_compute_url_map.default.self_link
+      depends_on = [
+        google_compute_url_map.default
+      ]
+    }

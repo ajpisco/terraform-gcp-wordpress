@@ -27,4 +27,5 @@ include {
 # These are the variables we have to pass in to use the module specified in the terragrunt configuration above
 inputs = {
   sa_account_id = local.sa_account_id
+  project_id = local.project_id
 }

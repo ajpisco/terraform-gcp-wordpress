@@ -22,7 +22,7 @@ variable "project_id" {
 
 variable "db_name" {
   type    = string
-  default = "wordpress-db"
+  description = "DB instance name"
 }
 
 variable "database_version" {

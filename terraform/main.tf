@@ -13,13 +13,14 @@ locals {
   public_address     = join("-", [var.product_name, var.env, "public-address"])
   db_name            = join("-", [var.product_name, var.env, "db"])
   load_balancer_name = join("-", [var.product_name, var.env, "lb"])
-  cloud_router = join("-", [var.product_name, var.env, "router"])
+  cloud_router       = join("-", [var.product_name, var.env, "router"])
 }
 
 module "iam" {
   source = "./modules/iam"
 
   sa_account_id = local.sa_account_id
+  project_id    = var.project_id
 }
 
 module "network" {
@@ -37,6 +38,21 @@ module "network" {
 
 }
 
+module "sql" {
+  source = "./modules/sql"
+
+  env              = var.env
+  project_id       = var.project_id
+  network_name     = module.network.network_name
+  network_id       = module.network.network_id
+  db_name          = local.db_name
+  user_name        = var.user_name
+  user_password    = var.user_password
+  db_tier          = var.db_tier
+  database_version = var.database_version
+  depends_on       = [module.network.network_id, module.network.network_name]
+}
+
 module "compute" {
   source = "./modules/compute"
 
@@ -51,7 +67,9 @@ module "compute" {
   hostname             = local.hostname
   network_name         = module.network.network_name
   subnet_name          = local.subnets[0].subnetwork_name
-  depends_on           = [module.network.network_name, module.network.subnets, module.iam.sa_email]
+  db_name              = local.db_name
+  instance_ip_address  = module.sql.instance_ip_address
+  depends_on           = [module.network.network_name, module.network.subnets, module.sql.instance_ip_address, module.iam.sa_email]
 
 }
 
@@ -67,19 +85,4 @@ module "lb" {
   https_tag          = local.https_tag
   load_balancer_name = local.load_balancer_name
   depends_on         = [module.compute.instance_group, module.network.network_id, module.network.public_address]
-}
-
-module "sql" {
-  source = "./modules/sql"
-
-  env              = var.env
-  project_id       = var.project_id
-  network_name     = module.network.network_name
-  network_id       = module.network.network_id
-  db_name          = local.db_name
-  user_name        = var.user_name
-  user_password    = var.user_password
-  db_tier          = var.db_tier
-  database_version = var.database_version
-  depends_on       = [module.network.network_id, module.network.network_name]
 }

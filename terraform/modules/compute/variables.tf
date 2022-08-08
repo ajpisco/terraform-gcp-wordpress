@@ -61,3 +61,13 @@ variable "subnet_name" {
   type        = string
   description = "Subnetwork name"
 }
+
+variable "db_name" {
+  type        = string
+  description = "DB instance name prefix to search in Cloud SQL"
+}
+
+variable "instance_ip_address" {
+  type        = string
+  description = "DB IP address"
+}

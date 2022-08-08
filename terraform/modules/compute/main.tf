@@ -1,3 +1,22 @@
+locals {
+  startup_script_template = file("modules/compute/scripts/boot.sh")
+
+  map = {
+    db_name = var.db_name
+    db_ip = var.instance_ip_address
+  }
+
+  startup_script = join("\n", [
+    for line in split("\n", local.startup_script_template) :
+      format(
+        replace(line, "/{(${join("|", keys(local.map))})}/", "%s"),
+        [
+          for value in flatten(regexall("{(${join("|", keys(local.map))})}", line)) :
+            lookup(local.map, value)
+        ]...
+      )
+  ])
+}
 module "instance_template" {
   source  = "terraform-google-modules/vm/google//modules/instance_template"
   version = "7.8.0"
@@ -15,7 +34,7 @@ module "instance_template" {
   name_prefix          = var.template_name_prefix
   network              = var.network_name
   subnetwork           = var.subnet_name
-  startup_script       = file("modules/compute/scripts/boot.sh")
+  startup_script       = local.startup_script
   tags                 = [var.https_tag, var.http_tag]
 }
 

@@ -26,10 +26,6 @@ include {
   path = find_in_parent_folders()
 }
 
-dependencies {
-  paths = ["../compute-service", "../network-service"]
-}
-
 dependency "network-service" {
   config_path = "../network-service"
 }
