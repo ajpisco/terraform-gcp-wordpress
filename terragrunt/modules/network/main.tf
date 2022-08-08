@@ -1,9 +1,9 @@
 locals {
   internal_fw_name = join("-", [module.vpc.network_name, "allow-internal-fw"])
-  https_fw_name    = join("-", [module.vpc.network_name, "wordpress-allow-https-fw"])
-  http_fw_name     = join("-", [module.vpc.network_name, "wordpress-allow-http-fw"])
-  ssh_fw_name      = join("-", [module.vpc.network_name, "wordpress-allow-ssh"])
-  icmp_fw_name     = join("-", [module.vpc.network_name, "wordpress-allow-icmp"])
+  https_fw_name    = join("-", [module.vpc.network_name, "allow-https-fw"])
+  http_fw_name     = join("-", [module.vpc.network_name, "allow-http-fw"])
+  ssh_fw_name      = join("-", [module.vpc.network_name, "allow-ssh"])
+  icmp_fw_name     = join("-", [module.vpc.network_name, "allow-icmp"])
   subnetwork_cidr  = [for subnet in var.subnets : subnet.subnetwork_cidr]
 }
 
@@ -156,6 +156,7 @@ module "public_address" {
   project_id   = var.project_id
   region       = var.region
   address_type = "EXTERNAL"
+  global = true
   names        = [var.public_address]
 }
 

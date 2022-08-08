@@ -5,14 +5,14 @@
 <br>
 
 This script will create the following resources:
-- `Service Account`: Sample SA to be used by Compute instances. Won't have any permissions because everything will be accessed through network
+- `Service Account`: Sample SA to be used by Compute instances (This one needs to be done without Google's module because it has some bugs regarding Service account adding permissions)
 - `VPC`: To create our subnet and run the workloads
 - `Subnet`: One subnet to for the region we are using
 - `Firewall rules`: For the instances networking connections
 - `External IP Address`: To be used by LB
 - `Cloud Router`: To be used by Cloud NAT
 - `Cloud NAT`: As we use private Compute Instances, we need NAT to connect to the internet
-- `HTTP Load Balancer`: To load workload into the MIG
+- `HTTP Load Balancer`: To load workload into the MIG (This one needs to be done without Google's module because it doesn't support TCP Healthchecks)
 - `Instance template`: To set the base instance image to run
 - `Managed Instance Group`: Scale the instances
 - `SQL`: Mysql database

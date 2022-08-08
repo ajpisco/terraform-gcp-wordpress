@@ -1,2 +1,2 @@
-env = "dev"
+env        = "stage"
 project_id = "ajpisco"
