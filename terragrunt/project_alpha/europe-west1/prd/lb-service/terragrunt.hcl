@@ -10,13 +10,15 @@ locals {
   project_id = local.project_vars.locals.project_id
   
   # Set local variables to be used
-  db_name            = join("-", ["wordpress", local.env, "db"])
+  load_balancer_name = join("-", ["wordpress", local.env, "lb"])
+  http_tag             = join("-", ["wordpress", "http"])
+  https_tag            = join("-", ["wordpress", "https"])
 }
 
 # Terragrunt will copy the Terraform configurations specified by the source parameter, along with any files in the
 # working directory, into a temporary folder, and execute your Terraform commands in that folder.
 terraform {
-  source = "../../../..//modules/sql"
+  source = "../../../..//modules/lb"
 }
 
 # Include all settings from the root terragrunt.hcl file (backend herited here)
@@ -28,17 +30,19 @@ dependency "network-service" {
   config_path = "../network-service"
 }
 
+dependency "compute-service" {
+  config_path = "../compute-service"
+}
+
 # These are the variables we have to pass in to use the module specified in the terragrunt configuration above
 inputs = {
   env = local.env
-  zone = local.zone
   project_id = local.project_id
-  network_name = dependency.network-service.outputs.network_name
-  network_id       = dependency.network-service.outputs.network_id
-  db_name          = local.db_name
+  public_address     = dependency.network-service.outputs.public_address
+  network_name       = dependency.network-service.outputs.network_name
+  instance_group     = dependency.compute-service.outputs.instance_group
+  http_tag = local.http_tag
+  https_tag = local.https_tag
+  load_balancer_name = local.load_balancer_name
 }
-  
-  
-  
-  
-  
+

@@ -10,35 +10,33 @@ locals {
   project_id = local.project_vars.locals.project_id
   
   # Set local variables to be used
-  db_name            = join("-", ["wordpress", local.env, "db"])
+  http_tag             = join("-", ["wordpress", "http"])
+  https_tag            = join("-", ["wordpress", "https"])
+  subnets = [{
+    "subnetwork_name" : join("-", ["wordpress", local.env, "subnet"]),
+    "subnetwork_cidr" : "10.0.0.0/24",
+    "region" : local.region
+  }]
+  cloud_router     = join("-", ["wordpress", local.env, "router"])
+  public_address     = join("-", ["wordpress", local.env, "public-address"])
+  network_name         = join("-", ["wordpress", local.env, "vpc"])
 }
 
 # Terragrunt will copy the Terraform configurations specified by the source parameter, along with any files in the
 # working directory, into a temporary folder, and execute your Terraform commands in that folder.
 terraform {
-  source = "../../../..//modules/sql"
-}
-
-# Include all settings from the root terragrunt.hcl file (backend herited here)
-include {
-  path = find_in_parent_folders()
-}
-
-dependency "network-service" {
-  config_path = "../network-service"
+  source = "../../../..//modules/network"
 }
 
 # These are the variables we have to pass in to use the module specified in the terragrunt configuration above
 inputs = {
   env = local.env
-  zone = local.zone
+  region = local.region
   project_id = local.project_id
-  network_name = dependency.network-service.outputs.network_name
-  network_id       = dependency.network-service.outputs.network_id
-  db_name          = local.db_name
+  cloud_router   = local.cloud_router
+  subnets        = local.subnets
+  network_name   = local.network_name
+  public_address = local.public_address
+  http_tag       = local.http_tag
+  https_tag      = local.https_tag
 }
-  
-  
-  
-  
-  

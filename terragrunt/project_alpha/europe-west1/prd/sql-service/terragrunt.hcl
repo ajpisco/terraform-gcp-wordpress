@@ -31,11 +31,11 @@ dependency "network-service" {
 # These are the variables we have to pass in to use the module specified in the terragrunt configuration above
 inputs = {
   env = local.env
-  zone = local.zone
   project_id = local.project_id
   network_name = dependency.network-service.outputs.network_name
   network_id       = dependency.network-service.outputs.network_id
   db_name          = local.db_name
+
 }
   
   
