@@ -45,6 +45,6 @@ sudo service apache2 reload
 sudo -u www-data cp /srv/www/wordpress/wp-config-sample.php /srv/www/wordpress/wp-config.php
 
 sudo -u www-data sed -i 's/database_name_here/{db_name}/' /srv/www/wordpress/wp-config.php
-sudo -u www-data sed -i 's/username_here/wordpress/' /srv/www/wordpress/wp-config.php
-sudo -u www-data sed -i 's/password_here/dummy/' /srv/www/wordpress/wp-config.php
+sudo -u www-data sed -i 's/username_here/{db_username}/' /srv/www/wordpress/wp-config.php
+sudo -u www-data sed -i 's/password_here/{db_password}/' /srv/www/wordpress/wp-config.php
 sudo -u www-data sed -i "s/localhost/{db_ip}/" /srv/www/wordpress/wp-config.php

@@ -71,3 +71,15 @@ variable "instance_ip_address" {
   type        = string
   description = "DB IP address"
 }
+
+variable "user_name" {
+  type      = string
+  sensitive = true
+  description = "DB user"
+}
+
+variable "user_password" {
+  type      = string
+  sensitive = true
+  description = "DB pass"
+}

@@ -4,6 +4,8 @@ locals {
   map = {
     db_name = var.db_name
     db_ip = var.instance_ip_address
+    db_username = var.user_name
+    db_password = var.user_password
   }
 
   startup_script = join("\n", [
