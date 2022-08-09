@@ -6,13 +6,11 @@ variable "env" {
 variable "region" {
   type        = string
   description = "GCP region to deploy resources"
-  default     = "australia-southeast1"
 }
 
 variable "zone" {
   type        = string
   description = "GCP zone to deploy resources"
-  default     = "australia-southeast1-b"
 }
 
 variable "project_id" {

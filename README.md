@@ -54,3 +54,5 @@ project_id = "<project-id>"
 
 
 Note: To avoid having Terragrunt throwing a "Filename too long" set environment variable TERRAGRUNT_DOWNLOAD to a different path: Example TERRAGRUNT_DOWNLOAD==C:\.terragrunt-cache
+
+Note 2: While running the Plan command without the resources applied (for example in the first plan), it might return an error in SQL module because it uses a data block which will look for existing network resource that have not been applied yet and thus, returns an error. Nevertheless, when we run the Apply command everything is applied

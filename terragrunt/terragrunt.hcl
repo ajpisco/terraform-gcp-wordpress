@@ -17,6 +17,7 @@ locals {
   # Extract the variables we need for easy access
   project_id = local.project_vars.locals.project_id
   region   = local.region_vars.locals.region
+  zone     = local.region_vars.locals.zone
 }
 
 # Generate an provider block
