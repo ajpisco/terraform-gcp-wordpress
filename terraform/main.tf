@@ -43,6 +43,8 @@ module "sql" {
 
   env              = var.env
   project_id       = var.project_id
+  region           = var.region
+  zone             = var.zone
   network_name     = module.network.network_name
   network_id       = module.network.network_id
   db_name          = local.db_name
@@ -68,7 +70,10 @@ module "compute" {
   network_name         = module.network.network_name
   subnet_name          = local.subnets[0].subnetwork_name
   db_name              = local.db_name
+  user_name            = var.user_name
+  user_password        = var.user_password
   instance_ip_address  = module.sql.instance_ip_address
+  
   depends_on           = [module.network.network_name, module.network.subnets, module.sql.instance_ip_address, module.iam.sa_email]
 
 }
